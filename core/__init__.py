@@ -1,0 +1,1 @@
+# core — Backend logic & utilities
