@@ -34,13 +34,18 @@ class AlertSimulator:
         category = transaction.get("Merchant_Category", "Unknown")
         hour = transaction.get("Hour", 0)
         age = transaction.get("Age", 0)
+        account_number = transaction.get("Account_Number", "N/A")
+        customer_email = transaction.get("Customer_Email", "N/A")
 
         # Time display
-        am_pm = "AM" if hour < 12 else "PM"
-        display_hour = hour if hour <= 12 else hour - 12
-        if display_hour == 0:
-            display_hour = 12
-        time_str = f"{display_hour}:{0:02d} {am_pm}"
+        if "Time" in transaction:
+            time_str = transaction["Time"]
+        else:
+            am_pm = "AM" if hour < 12 else "PM"
+            display_hour = hour if hour <= 12 else hour - 12
+            if display_hour == 0:
+                display_hour = 12
+            time_str = f"{display_hour}:00 {am_pm}"
 
         # Build risk factors
         risk_factors = []
@@ -98,13 +103,17 @@ From:    fraud-detection@securbank.com
 To:      security-team@securbank.com
 Subject: 🚨 {risk_tier.upper()}-RISK Transaction Detected — {txn_id}
 
+Account Information:
+  Account No:  {account_number}
+  Email:       {customer_email}
+  Customer:    Age {age}
+
 Transaction Details:
   Amount:    Rs. {amount:,.2f}
   Type:      {txn_type}
   Device:    {device}
   Time:      {time_str}
   Category:  {category}
-  Customer:  Age {age}
 
 Risk Assessment:
   Risk Score:  {risk_score}/100 ({risk_tier})

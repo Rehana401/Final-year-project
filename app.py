@@ -82,6 +82,12 @@ st.markdown("""
         padding: 1.5rem;
     }
 
+    /* Hide 'Press Enter to submit form' text inside inputs */
+    div[data-testid="InputInstructions"] > span,
+    div[data-testid="InputInstructions"] {
+        display: none !important;
+    }
+
     /* Expander styling */
     .streamlit-expanderHeader {
         font-weight: 600;

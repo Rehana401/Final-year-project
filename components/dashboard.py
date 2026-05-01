@@ -63,34 +63,64 @@ def _show_manual_entry(db, prediction_engine, history_manager):
     st.markdown("Fill in the transaction details below to check for fraud.")
 
     with st.form("transaction_form", clear_on_submit=False):
-        col1, col2, col3 = st.columns(3)
+        col1, col2 = st.columns(2)
 
         with col1:
+            account_number = st.text_input("Account Number", placeholder="e.g. 1234567890")
             amount = st.number_input("Transaction Amount (₹)", min_value=10.0,
                                      max_value=99000.0, value=25000.0, step=1.0)
-            balance = st.number_input("Account Balance (₹)", min_value=5000.0,
-                                      max_value=100000.0, value=50000.0, step=1.0)
-            age = st.number_input("Customer Age", min_value=18, max_value=70, value=35)
-            gender = st.selectbox("Gender", ["Male", "Female"])
-
-        with col2:
             account_type = st.selectbox("Account Type", ACCOUNT_TYPE_CATEGORIES)
-            txn_type = st.selectbox("Transaction Type", TRANSACTION_TYPE_CATEGORIES)
             merchant_cat = st.selectbox("Merchant Category", MERCHANT_CATEGORY_CATEGORIES)
             device_type = st.selectbox("Device Type", DEVICE_TYPE_CATEGORIES)
+            age = st.number_input("Customer Age", min_value=18, max_value=70, value=35)
 
-        with col3:
+        with col2:
+            customer_email = st.text_input("Customer Email", placeholder="e.g. user@email.com")
+            balance = st.number_input("Account Balance (₹)", min_value=5000.0,
+                                      max_value=100000.0, value=50000.0, step=1.0)
+            txn_type = st.selectbox("Transaction Type", TRANSACTION_TYPE_CATEGORIES)
             txn_device = st.selectbox("Transaction Device", TRANSACTION_DEVICE_CATEGORIES)
-            txn_time = st.time_input("Transaction Time", value=datetime.now().time())
             day_name = st.selectbox("Day of Week", DAYS_OF_WEEK)
             day_of_week = DAYS_OF_WEEK.index(day_name)
+            
+            st.markdown("**Transaction Time**")
+            time_col1, time_col2, time_col3 = st.columns(3)
+            # Determine current 12-hour defaults
+            _now = datetime.now()
+            _default_h12 = _now.hour % 12 or 12
+            _default_period = "AM" if _now.hour < 12 else "PM"
+            with time_col1:
+                txn_hour_12 = st.selectbox(
+                    "Hour", options=list(range(1, 13)),
+                    index=_default_h12 - 1, key="txn_hour_12"
+                )
+            with time_col2:
+                minute_options = [f"{m:02d}" for m in range(60)]
+                txn_minute = st.selectbox(
+                    "Minute", options=minute_options,
+                    index=_now.minute, key="txn_minute"
+                )
+            with time_col3:
+                txn_period = st.selectbox(
+                    "AM / PM", options=["AM", "PM"],
+                    index=0 if _default_period == "AM" else 1,
+                    key="txn_period"
+                )
 
         submitted = st.form_submit_button("🔍 Analyze Transaction",
                                            type="primary",
                                            use_container_width=True)
 
     if submitted and prediction_engine.is_ready():
-        hour = txn_time.hour
+        if amount > balance:
+            st.warning("⚠️ **Warning:** Transaction Amount cannot be greater than the Account Balance!")
+            return
+
+        # Convert 12-hour AM/PM to 24-hour format
+        if txn_period == "AM":
+            hour = 0 if txn_hour_12 == 12 else txn_hour_12
+        else:
+            hour = 12 if txn_hour_12 == 12 else txn_hour_12 + 12
 
         # Load feature extractor from disk if available
         import os, joblib
@@ -108,7 +138,6 @@ def _show_manual_entry(db, prediction_engine, history_manager):
             transaction_amount=amount,
             account_balance=balance,
             age=age,
-            gender=gender,
             account_type=account_type,
             transaction_type=txn_type,
             merchant_category=merchant_cat,
@@ -118,16 +147,21 @@ def _show_manual_entry(db, prediction_engine, history_manager):
             day_of_week=day_of_week,
         )
 
-        # Raw values for risk assessment
+        # Raw values for risk assessment and reporting
         raw_values = {
+            "Account_Number": account_number if account_number else "N/A",
+            "Customer_Email": customer_email if customer_email else "N/A",
             "Transaction_Amount": amount,
             "Account_Balance": balance,
             "Age": age,
-            "Gender": gender,
+            "Account_Type": account_type,
             "Transaction_Type": txn_type,
-            "Device_Type": device_type,
-            "Hour": hour,
             "Merchant_Category": merchant_cat,
+            "Device_Type": device_type,
+            "Transaction_Device": txn_device,
+            "Hour": hour,
+            "Time": f"{txn_hour_12}:{txn_minute} {txn_period}",
+            "Day_Of_Week": day_name,
         }
 
         # Predict

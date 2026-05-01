@@ -125,13 +125,18 @@ class ReportGenerator:
         elements.append(Paragraph("Transaction Details", self.styles["SectionHeader"]))
         txn_data = [["Field", "Value"]]
         display_fields = [
+            ("Account Number", transaction.get("Account_Number", "N/A")),
+            ("Customer Email", transaction.get("Customer_Email", "N/A")),
             ("Transaction Amount", f"Rs. {transaction.get('Transaction_Amount', 0):,.2f}"),
             ("Account Balance", f"Rs. {transaction.get('Account_Balance', 0):,.2f}"),
+            ("Account Type", transaction.get("Account_Type", "N/A")),
             ("Transaction Type", transaction.get("Transaction_Type", "N/A")),
             ("Merchant Category", transaction.get("Merchant_Category", "N/A")),
             ("Device Type", transaction.get("Device_Type", "N/A")),
+            ("Transaction Device", transaction.get("Transaction_Device", "N/A")),
+            ("Transaction Time", transaction.get("Time", f"{transaction.get('Hour', 'N/A')}:00")),
+            ("Day of Week", transaction.get("Day_Of_Week", "N/A")),
             ("Customer Age", str(transaction.get("Age", "N/A"))),
-            ("Gender", transaction.get("Gender", "N/A")),
         ]
         for field, value in display_fields:
             txn_data.append([field, value])

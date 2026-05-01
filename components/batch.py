@@ -37,7 +37,7 @@ def show_batch_page(db, prediction_engine: PredictionEngine,
         st.info("📎 Upload a CSV file to get started.")
         with st.expander("📋 Required CSV columns"):
             st.code(
-                "Transaction_Amount,Account_Balance,Age,Gender,Account_Type,"
+                "Transaction_Amount,Account_Balance,Age,Account_Type,"
                 "Transaction_Type,Merchant_Category,Device_Type",
                 language="csv"
             )
@@ -78,7 +78,6 @@ def show_batch_page(db, prediction_engine: PredictionEngine,
                     transaction_amount=float(row.get("Transaction_Amount", 0)),
                     account_balance=float(row.get("Account_Balance", 50000)),
                     age=int(row.get("Age", 30)),
-                    gender=str(row.get("Gender", "Male")),
                     account_type=str(row.get("Account_Type", "Savings")),
                     transaction_type=str(row.get("Transaction_Type", "Debit")),
                     merchant_category=str(row.get("Merchant_Category", "Groceries")),

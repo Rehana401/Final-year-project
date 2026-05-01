@@ -17,26 +17,24 @@ from typing import List, Dict, Optional
 
 
 # Encoding maps for categorical features
-GENDER_MAP = {"Male": 0, "Female": 1}
 
 ACCOUNT_TYPE_CATEGORIES = ["Savings", "Business", "Checking"]
-TRANSACTION_TYPE_CATEGORIES = ["Transfer", "Bill Payment", "Debit", "Withdrawal", "Credit"]
+TRANSACTION_TYPE_CATEGORIES = ["Transfer", "Bill Payment", "Debit", "Withdrawal", "Credit", "Education", "Shopping"]
 MERCHANT_CATEGORY_CATEGORIES = ["Restaurant", "Groceries", "Entertainment", "Health", "Clothing", "Electronics"]
-DEVICE_TYPE_CATEGORIES = ["POS", "Desktop", "Mobile", "ATM"]
+DEVICE_TYPE_CATEGORIES = ["POS", "Desktop", "Mobile"]
 TRANSACTION_DEVICE_CATEGORIES = [
-    "Self-service Banking Machine", "ATM", "ATM Booth Kiosk",
-    "Debit/Credit Card", "Smart Card", "Wearable Device",
-    "Virtual Card", "Tablet", "Desktop/Laptop", "Voice Assistant",
+    "Self-service Banking Machine", "Wearable Device",
+    "Tablet", "Desktop/Laptop", "Voice Assistant",
     "POS Mobile Device", "Banking Chatbot", "Web Browser",
-    "Biometric Scanner", "QR Code Scanner", "Mobile Device",
-    "Payment Gateway Device", "POS Mobile App", "Bank Branch", "POS Terminal",
+    "Mobile Device", "Payment Gateway Device", "POS Mobile App", 
+    "Bank Branch", "POS Terminal",
 ]
 
 # Columns to drop from raw dataset
 DROP_COLUMNS = [
     "Customer_ID", "Customer_Name", "Transaction_ID", "Merchant_ID",
     "Customer_Contact", "Customer_Email", "Transaction_Currency",
-    "Transaction_Location", "Transaction_Description",
+    "Transaction_Location", "Transaction_Description", "Gender",
 ]
 
 # Core numeric feature names (before one-hot encoding)
@@ -44,7 +42,6 @@ NUMERIC_FEATURES = [
     "Transaction_Amount", "Account_Balance", "Age",
     "Amount_to_Balance_Ratio", "Is_Night_Transaction", "Is_Weekend",
     "Hour", "DayOfWeek", "Month",
-    "State_freq", "City_freq", "Bank_Branch_freq",
 ]
 
 
@@ -101,7 +98,7 @@ class FeatureExtractor:
                                columns: List[str] = None):
         """Fit frequency encoding maps from training data."""
         if columns is None:
-            columns = ["State", "City", "Bank_Branch"]
+            columns = []
 
         for col in columns:
             if col in df.columns:
@@ -112,7 +109,7 @@ class FeatureExtractor:
                                   columns: List[str] = None) -> pd.DataFrame:
         """Apply pre-fitted frequency encoding to a DataFrame."""
         if columns is None:
-            columns = ["State", "City", "Bank_Branch"]
+            columns = []
 
         df = df.copy()
         for col in columns:
@@ -172,14 +169,14 @@ class FeatureExtractor:
         df = df.drop(columns=["Transaction_Date", "Transaction_Time"], errors="ignore")
 
         # --- Frequency encoding for high-cardinality cols ---
-        freq_cols = ["State", "City", "Bank_Branch"]
+        freq_cols = []
         if fit_frequency:
             self.fit_frequency_encoding(df, freq_cols)
         df = self.apply_frequency_encoding(df, freq_cols)
         df = df.drop(columns=freq_cols, errors="ignore")
 
         # --- One-hot encoding for low-cardinality cols ---
-        cat_cols = ["Gender", "Account_Type", "Transaction_Type",
+        cat_cols = ["Account_Type", "Transaction_Type",
                     "Merchant_Category", "Transaction_Device", "Device_Type"]
         existing_cats = [c for c in cat_cols if c in df.columns]
         df = pd.get_dummies(df, columns=existing_cats, drop_first=True, dtype=int)
@@ -197,15 +194,12 @@ class FeatureExtractor:
     # ------------------------------------------------------------------
     def extract_from_manual_input(self, transaction_amount: float,
                                    account_balance: float, age: int,
-                                   gender: str, account_type: str,
+                                   account_type: str,
                                    transaction_type: str,
                                    merchant_category: str,
                                    device_type: str,
                                    transaction_device: str,
-                                   hour: int, day_of_week: int,
-                                   state: str = "Unknown",
-                                   city: str = "Unknown",
-                                   bank_branch: str = "Unknown") -> pd.DataFrame:
+                                   hour: int, day_of_week: int) -> pd.DataFrame:
         """
         Convert manual dashboard inputs into feature DataFrame
         matching the training schema.
@@ -215,15 +209,11 @@ class FeatureExtractor:
             "Transaction_Amount": [transaction_amount],
             "Account_Balance": [account_balance],
             "Age": [age],
-            "Gender": [gender],
             "Account_Type": [account_type],
             "Transaction_Type": [transaction_type],
             "Merchant_Category": [merchant_category],
             "Device_Type": [device_type],
             "Transaction_Device": [transaction_device],
-            "State": [state],
-            "City": [city],
-            "Bank_Branch": [bank_branch],
             "Amount_to_Balance_Ratio": [self.calc_amount_to_balance_ratio(
                 transaction_amount, account_balance
             )],
@@ -237,11 +227,10 @@ class FeatureExtractor:
         df = pd.DataFrame(raw_data)
 
         # Frequency encoding
-        df = self.apply_frequency_encoding(df, ["State", "City", "Bank_Branch"])
-        df = df.drop(columns=["State", "City", "Bank_Branch"], errors="ignore")
+        df = self.apply_frequency_encoding(df, [])
 
         # One-hot encoding
-        cat_cols = ["Gender", "Account_Type", "Transaction_Type",
+        cat_cols = ["Account_Type", "Transaction_Type",
                     "Merchant_Category", "Transaction_Device", "Device_Type"]
         existing_cats = [c for c in cat_cols if c in df.columns]
         df = pd.get_dummies(df, columns=existing_cats, drop_first=True, dtype=int)
@@ -267,7 +256,6 @@ class FeatureExtractor:
             "Transaction_Amount": round(random.uniform(10, 99000), 2),
             "Account_Balance": round(random.uniform(5000, 100000), 2),
             "Age": random.randint(18, 70),
-            "Gender": random.choice(["Male", "Female"]),
             "Account_Type": random.choice(ACCOUNT_TYPE_CATEGORIES),
             "Transaction_Type": random.choice(TRANSACTION_TYPE_CATEGORIES),
             "Merchant_Category": random.choice(MERCHANT_CATEGORY_CATEGORIES),
@@ -275,10 +263,4 @@ class FeatureExtractor:
             "Transaction_Device": random.choice(TRANSACTION_DEVICE_CATEGORIES),
             "Hour": random.randint(0, 23),
             "DayOfWeek": random.randint(0, 6),
-            "State": random.choice(["Maharashtra", "Kerala", "Tamil Nadu", "Delhi",
-                                     "Karnataka", "Gujarat", "Bihar", "Punjab"]),
-            "City": random.choice(["Mumbai", "Chennai", "Delhi", "Bangalore",
-                                    "Pune", "Hyderabad", "Kolkata", "Ahmedabad"]),
-            "Bank_Branch": random.choice(["Main Branch", "City Branch",
-                                           "Metro Branch", "Sub Branch"]),
         }
