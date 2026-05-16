@@ -1,0 +1,60 @@
+@startuml
+skinparam componentStyle rectangle
+skinparam handwritten false
+skinparam shadowing false
+
+skinparam component {
+    BackgroundColor #EFF6FF
+    BorderColor #3B82F6
+    ArrowColor #64748B
+}
+
+skinparam package {
+    BackgroundColor white
+    BorderColor #94A3B8
+}
+
+skinparam database {
+    BackgroundColor #F0FDF4
+    BorderColor #22C55E
+}
+
+title SecurBank - Component Diagram (React/Flask Architecture)
+
+package "Frontend (React 19)" {
+    [UI Components] as UI
+    [Context API] as Context
+    [API Services] as Services
+    UI ..> Context
+    Context ..> Services
+}
+
+package "Backend API (Flask)" {
+    [Blueprint Routes] as Routes
+    [JWT Middleware] as JWT
+    Routes ..> JWT
+}
+
+package "Logic Layer (Python)" {
+    [Prediction Engine] as PE
+    [Feature Extractor] as FE
+    [History Manager] as HM
+    [Model Trainer] as Trainer
+}
+
+database "Data Layer" {
+    [app.db (SQLite)] as DB
+    [Trained Models (.pkl)] as Models
+}
+
+' Interactions
+Services <==> Routes : "JSON/REST API"
+JWT --> PE
+JWT --> HM
+PE --> FE
+HM --> DB
+PE --> Models
+Trainer --> Models
+Trainer --> DB
+
+@enduml

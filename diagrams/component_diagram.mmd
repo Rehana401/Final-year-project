@@ -1,0 +1,52 @@
+flowchart TB
+    %% Styling
+    classDef frontend fill:#eff6ff,stroke:#3b82f6,stroke-width:2px,color:#1e40af;
+    classDef backend fill:#f0fdf4,stroke:#22c55e,stroke-width:2px,color:#166534;
+    classDef logic fill:#fff7ed,stroke:#f97316,stroke-width:2px,color:#9a3412;
+    classDef storage fill:#f8fafc,stroke:#64748b,stroke-width:2px,color:#334155;
+
+    subgraph Client [Client - React Frontend]
+        direction TB
+        UI[UI Components<br/>Framer Motion / Lucide]
+        Context[Context API<br/>Auth & Theme]
+        Services[API Services<br/>Axios / api.js]
+    end
+
+    subgraph API [API Layer - Flask Backend]
+        direction TB
+        Routes[Blueprint Routes<br/>predict, auth, admin]
+        JWT[JWT Manager<br/>Security Middleware]
+    end
+
+    subgraph Core [Business Logic - Python Core]
+        direction TB
+        PE[Prediction Engine]
+        FE[Feature Extractor]
+        HM[History Manager]
+        Trainer[Model Trainer]
+    end
+
+    subgraph Data [Data Layer]
+        direction TB
+        DB[(SQLite Database<br/>app.db)]
+        Models[ML Models<br/>.pkl Files]
+    end
+
+    %% Interactions
+    UI --> Context
+    Context --> Services
+    Services <== "JSON / HTTPS (Port 5000)" ==> Routes
+    Routes --> JWT
+    JWT --> PE
+    PE --> FE
+    Routes --> HM
+    HM --> DB
+    PE --> Models
+    Trainer --> Models
+    Trainer --> DB
+
+    %% Apply Styles
+    class Client,UI,Context,Services frontend;
+    class API,Routes,JWT backend;
+    class Core,PE,FE,HM,Trainer logic;
+    class Data,DB,Models storage;
