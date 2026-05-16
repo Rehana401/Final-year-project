@@ -1,0 +1,41 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+skinparam conditionStyle diamond
+
+title SecurBank - Activity Diagram (System Workflow)
+
+start
+
+:Open Web Application;
+
+if (User Logged In?) then (no)
+  :Show Landing Page;
+  :Login / Signup;
+endif
+
+:Display Dashboard;
+
+repeat
+  :Select Action;
+  
+  if (Action == Analyze) then (yes)
+    :Input Transaction Details;
+    :Process via Prediction Engine;
+    :Feature Engineering & ML Inference;
+    :Display Rs Risk Assessment;
+    :Save to Analysis History;
+    if (Generate PDF?) then (yes)
+      :Create PDF Report;
+    endif
+  else (no)
+    if (Action == Logout) then (yes)
+      :Logout User;
+      stop
+    endif
+  endif
+repeat while (Continue Session?) is (yes)
+
+stop
+
+@enduml

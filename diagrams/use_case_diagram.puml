@@ -1,0 +1,36 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+skinparam packageStyle rectangle
+left to right direction
+
+title SecurBank - Use Case Diagram
+
+actor "Bank User" as User
+actor "System Admin" as Admin
+
+rectangle "Fraud Detection System" {
+  usecase "Login / Signup" as UC1
+  usecase "Analyze Transaction" as UC2
+  usecase "View History" as UC3
+  usecase "Generate Reports" as UC4
+  usecase "View Privacy & Terms" as UC5
+  
+  usecase "Train ML Models" as UC6
+  usecase "Manage Users" as UC7
+  usecase "View System Stats" as UC8
+}
+
+' Links
+User --> UC1
+User --> UC2
+User --> UC3
+User --> UC4
+User --> UC5
+
+Admin -up-|> User
+Admin --> UC6
+Admin --> UC7
+Admin --> UC8
+
+@enduml

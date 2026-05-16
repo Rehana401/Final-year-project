@@ -1,0 +1,17 @@
+flowchart TD
+    %% Styling for Black & White Documentation
+    classDef object fill:#ffffff,stroke:#000000,stroke-width:1px,color:#000000;
+
+    obj_db["<u>dbMgr : DatabaseManager</u><br/>db_path = 'app.db'<br/>status = 'Connected'"]
+    obj_engine["<u>predEngine : PredictionEngine</u><br/>model = 'XGBoost'<br/>ready = True"]
+    obj_user["<u>currUser : User</u><br/>username = 'Rehana'<br/>role = 'Admin'"]
+    obj_txn["<u>activeTxn : Transaction</u><br/>amount = 5000<br/>type = 'Transfer'"]
+    obj_res["<u>result : Prediction</u><br/>label = 'Fraud'<br/>score = 92.4"]
+
+    %% Links
+    obj_user -- logged_in --> obj_db
+    obj_db -- stores --> obj_res
+    obj_engine -- analyzed --> obj_txn
+    obj_engine -- produced --> obj_res
+
+    class obj_db,obj_engine,obj_user,obj_txn,obj_res object;

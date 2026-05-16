@@ -1,0 +1,32 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+
+title SecurBank - Object Diagram (Runtime Snapshot)
+
+object "<u>dbMgr : DatabaseManager</u>" as DB {
+    db_path = "app.db"
+    status = "Connected"
+}
+
+object "<u>predEngine : PredictionEngine</u>" as Engine {
+    model = "XGBoost"
+    ready = True
+}
+
+object "<u>activeTxn : Transaction</u>" as Txn {
+    amount = 5000
+    type = "Transfer"
+    currency = "Rs"
+}
+
+object "<u>result : Prediction</u>" as Result {
+    label = "Fraud"
+    riskScore = 92.4
+}
+
+DB -- Result : "stores"
+Engine -- Txn : "analyzes"
+Engine -- Result : "produces"
+
+@enduml

@@ -1,0 +1,41 @@
+erDiagram
+    %% Styling for Black & White Documentation
+    %% Note: Mermaid ER diagrams use standard notation.
+
+    USERS ||--o{ ANALYSIS_HISTORY : performs
+    
+    USERS {
+        TEXT userId PK "UUID"
+        TEXT username UK
+        TEXT email UK
+        TEXT password "Hashed"
+        INTEGER is_admin "0 or 1"
+        TEXT createdAt
+        TEXT lastLogin
+    }
+
+    ANALYSIS_HISTORY {
+        TEXT historyId PK "UUID"
+        TEXT userId FK "References USERS"
+        TEXT transactionDetails "JSON"
+        TEXT resultLabel "Fraud/Legitimate"
+        REAL riskScore "0.0 - 100.0"
+        REAL confidenceScore
+        TEXT featureImportance "JSON"
+        TEXT predictedAt
+        TEXT exportedAs
+    }
+
+    MODEL_METADATA {
+        TEXT modelId PK "UUID"
+        TEXT algorithmType "RF/XGB"
+        TEXT version
+        REAL accuracy
+        REAL precision_score
+        REAL recall
+        REAL f1Score
+        REAL aucRoc
+        INTEGER isBestModel "Boolean"
+        TEXT filePath
+        TEXT trainedAt
+    }

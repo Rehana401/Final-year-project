@@ -1,0 +1,37 @@
+sequenceDiagram
+    autonumber
+    
+    %% Styling for Black & White Documentation
+    %% Note: Mermaid sequence diagrams have limited direct styling for monochrome but use clean lines.
+
+    actor User as Bank User
+    participant Frontend as React Dashboard
+    participant API as Flask Backend
+    participant PE as Prediction Engine
+    participant DB as Database (app.db)
+
+    User->>Frontend: Enter Transaction Details
+    User->>Frontend: Click "Analyze Transaction"
+    
+    activate Frontend
+    Frontend->>API: POST /api/predict (JSON + JWT)
+    
+    activate API
+    API->>API: Verify Authentication
+    
+    API->>PE: predict(transaction_data)
+    
+    activate PE
+    PE->>PE: Feature Extraction
+    PE->>PE: ML Model Inference
+    PE->>PE: Calculate Risk Score & SHAP
+    PE-->>API: Result (Label, Score, Importance)
+    deactivate PE
+    
+    API->>DB: Save to ANALYSIS_HISTORY
+    API-->>Frontend: HTTP 200 (JSON Results)
+    deactivate API
+    
+    Frontend->>Frontend: Update State & Charts
+    Frontend-->>User: Display Results (Rs Risk Assessment)
+    deactivate Frontend

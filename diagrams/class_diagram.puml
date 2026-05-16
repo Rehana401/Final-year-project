@@ -1,0 +1,46 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+hide circle
+
+title SecurBank - Class Diagram (Backend Architecture)
+
+class DatabaseManager {
+    + db_path : str
+    + create_user(username, email, password)
+    + authenticate(email, password)
+    + save_search(user_id, details, label, score)
+    + get_history(user_id)
+}
+
+class PredictionEngine {
+    + model : object
+    + scaler : object
+    + predict(data) : dict
+    - _assess_risk(values) : dict
+    - _get_shap_values(X) : list
+}
+
+class FeatureExtractor {
+    + frequency_maps : dict
+    + extract_from_dataframe(df)
+    + extract_from_manual_input(data)
+}
+
+class HistoryManager {
+    - db : DatabaseManager
+    + save_result(user_id, label, score)
+    + get_user_history(user_id)
+}
+
+class AlertSimulator {
+    + generate_alert(txn, pred)
+    + get_severity_color(tier)
+}
+
+' Relationships
+HistoryManager o-- DatabaseManager
+PredictionEngine ..> FeatureExtractor
+PredictionEngine ..> AlertSimulator
+
+@enduml

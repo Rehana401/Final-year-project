@@ -1,0 +1,25 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+
+title SecurBank - DFD Level 0 (Context Diagram)
+
+rectangle "Bank User" as User
+rectangle "System Admin" as Admin
+
+rectangle "Fraud Detection System" as FDS <<process>> {
+}
+
+database "SQLite Database" as DB
+database "File System" as FS
+
+User -right-> FDS : "Transaction Data"
+FDS -left-> User : "Risk Score / PDF"
+
+Admin -down-> FDS : "Datasets / Config"
+FDS -up-> Admin : "Performance Metrics"
+
+FDS <--> DB : "Read/Write"
+FDS <--> FS : "Load Models"
+
+@enduml

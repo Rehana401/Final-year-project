@@ -1,0 +1,42 @@
+classDiagram
+    %% Styling for Black & White Documentation
+    classDef default fill:#ffffff,stroke:#000000,stroke-width:1px,color:#000000;
+
+    class DatabaseManager {
+        +str db_path
+        +create_user(username, email, password)
+        +authenticate(email, password)
+        +save_search(user_id, details, label, score)
+        +get_history(user_id)
+    }
+
+    class PredictionEngine {
+        +model
+        +scaler
+        +explainer
+        +predict(data)
+        -_assess_risk(raw_values)
+        -_get_shap_values(X, features)
+    }
+
+    class FeatureExtractor {
+        +dict frequency_maps
+        +extract_from_dataframe(df)
+        +extract_from_manual_input(data)
+    }
+
+    class HistoryManager {
+        +DatabaseManager db
+        +save_result(user_id, label, score)
+        +get_user_history(user_id)
+    }
+
+    class AlertSimulator {
+        +generate_alert(txn, pred)
+        +get_severity_color(tier)
+    }
+
+    %% Relationships
+    HistoryManager o-- DatabaseManager : aggregates
+    PredictionEngine ..> FeatureExtractor : uses
+    PredictionEngine ..> AlertSimulator : uses

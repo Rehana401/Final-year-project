@@ -1,0 +1,25 @@
+flowchart LR
+    %% Styling for Black & White Documentation
+    classDef default fill:#ffffff,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef process fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000;
+    classDef store fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000;
+
+    User[Bank User]
+    Admin[System Admin]
+    
+    FDS((Fraud Detection System))
+    
+    DB[(SQLite Database)]
+    FS[(File System)]
+
+    %% Data Flows
+    User -- "Transaction Data / Rs Amounts" --> FDS
+    FDS -- "Prediction Result / PDF" --> User
+    Admin -- "Datasets / Training Config" --> FDS
+    FDS -- "Model Metrics" --> Admin
+    
+    FDS <== "Read/Write" ==> DB
+    FDS <== "Load Models" ==> FS
+
+    class FDS process;
+    class DB,FS store;

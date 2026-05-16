@@ -1,0 +1,29 @@
+flowchart TD
+    %% Styling for Black & White Documentation
+    classDef default fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000;
+    classDef startStop fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000,rx:20,ry:20;
+
+    Start([Start]) --> OpenApp[Open Web Application]
+    OpenApp --> CheckLogin{Is User<br/>Logged In?}
+    
+    CheckLogin -- No --> ShowLanding[Show Landing Page]
+    ShowLanding --> Auth[Login / Signup]
+    Auth --> CheckLogin
+    
+    CheckLogin -- Yes --> Dashboard[Display Dashboard]
+    
+    Dashboard --> SelectAction{Choose Action}
+    
+    SelectAction --> Analyze[Analyze Transaction]
+    Analyze --> InputData[Input Details / Upload CSV]
+    InputData --> RunPredict[Run Prediction Engine]
+    RunPredict --> ProcessResult[Feature Extraction & ML Prediction]
+    ProcessResult --> DisplayResults[Show Results & Rs Risk Assessment]
+    DisplayResults --> SaveHistory[Save to ANALYSIS_HISTORY]
+    SaveHistory --> OptPDF[Optional: Generate PDF]
+    OptPDF --> Dashboard
+    
+    SelectAction --> Logout[Logout]
+    Logout --> ShowLanding
+    
+    class Start,End startStop;

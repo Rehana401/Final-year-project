@@ -1,0 +1,36 @@
+flowchart LR
+    %% Styling for Black & White Documentation
+    classDef default fill:#ffffff,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef actor fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000;
+    classDef usecase fill:#ffffff,stroke:#000000,stroke-width:1px,color:#000000,rx:20,ry:20;
+
+    User[[Bank User]]
+    Admin[[System Admin]]
+
+    subgraph FDS [Fraud Detection System]
+        direction TB
+        UC1([Login / Signup])
+        UC2([Analyze Transaction])
+        UC3([View History])
+        UC4([Generate PDF Report])
+        UC5([View Privacy & Terms])
+        
+        UC6([Train ML Models])
+        UC7([Manage Users])
+        UC8([View System Stats])
+    end
+
+    %% Relationships
+    User --> UC1
+    User --> UC2
+    User --> UC3
+    User --> UC4
+    User --> UC5
+
+    Admin --> User
+    Admin --> UC6
+    Admin --> UC7
+    Admin --> UC8
+
+    class User,Admin actor;
+    class UC1,UC2,UC3,UC4,UC5,UC6,UC7,UC8 usecase;

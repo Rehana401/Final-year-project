@@ -1,0 +1,32 @@
+flowchart TB
+    %% Styling for Black & White Documentation
+    classDef default fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000;
+    classDef node fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000,stroke-dasharray: 5 5;
+
+    subgraph Client [Client Device]
+        Browser[Web Browser<br/>(React Application)]
+    end
+
+    subgraph Server [Application Server]
+        direction TB
+        subgraph WebServer [Vite Dev Server / Nginx]
+            ReactApp[Frontend Bundle<br/>React 19]
+        end
+        
+        subgraph APIServer [Flask Server / Gunicorn]
+            FlaskAPI[Python API<br/>Blueprints & Logic]
+        end
+    end
+
+    subgraph Storage [Data Storage]
+        DB[(SQLite app.db)]
+        Models[ML Models<br/>.pkl Files]
+    end
+
+    %% Connections
+    Browser <== "HTTPS / JSON<br/>(Port 5173)" ==> WebServer
+    WebServer <== "API Calls<br/>(Port 5000)" ==> APIServer
+    APIServer --> DB
+    APIServer --> Models
+
+    class Client,Server,Storage node;

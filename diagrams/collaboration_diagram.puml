@@ -1,0 +1,21 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+
+title SecurBank - Collaboration Diagram (Communication)
+
+object "<u>:ReactDashboard</u>" as UI
+object "<u>:FlaskAPI</u>" as API
+object "<u>:PredictionEngine</u>" as PE
+object "<u>:DatabaseManager</u>" as DB
+
+User -> UI : 1: Input details
+UI -> API : 2: POST /predict
+API -> API : 3: Verify Auth
+API -> PE : 4: predict()
+PE -> PE : 5: feature_eng()
+API -> DB : 6: save_result()
+API -> UI : 7: JSON response
+UI -> User : 8: Render Rs results
+
+@enduml

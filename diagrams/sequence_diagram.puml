@@ -1,0 +1,45 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+skinparam sequence {
+    ArrowColor black
+    ActorBorderColor black
+    LifeLineBorderColor black
+    ParticipantBorderColor black
+}
+
+title SecurBank - Sequence Diagram (Analyze Transaction Flow)
+
+actor "Bank User" as User
+participant "React Dashboard" as Frontend
+participant "Flask Backend" as API
+participant "Prediction Engine" as PE
+database "Database (app.db)" as DB
+
+User -> Frontend : Enter Details
+User -> Frontend : Click "Analyze"
+
+activate Frontend
+Frontend -> API : POST /api/predict (JSON + JWT)
+
+activate API
+API -> API : Authenticate Request
+
+API -> PE : predict(data)
+activate PE
+PE -> PE : Process Features
+PE -> PE : ML Inference
+PE -> PE : Assess Risk
+PE -> PE : Get SHAP Values
+PE --> API : Result Data
+deactivate PE
+
+API -> DB : Save Result
+API --> Frontend : JSON Response
+deactivate API
+
+Frontend -> Frontend : Render Charts
+Frontend --> User : Display "Rs" Assessment
+deactivate Frontend
+
+@enduml

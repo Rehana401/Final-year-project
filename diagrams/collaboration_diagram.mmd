@@ -1,0 +1,21 @@
+flowchart TD
+    %% Styling for Black & White Documentation
+    classDef object fill:#ffffff,stroke:#000000,stroke-width:1px,color:#000000;
+
+    User((Bank User))
+    UI[<u>:ReactDashboard</u>]
+    API[<u>:FlaskAPI</u>]
+    PE[<u>:PredictionEngine</u>]
+    DB[<u>:DatabaseManager</u>]
+
+    %% Numbered message flows
+    User -- "1: input details" --> UI
+    UI -- "2: POST /predict" --> API
+    API -- "3: authenticate()" --> API
+    API -- "4: predict()" --> PE
+    PE -- "5: extract_features()" --> PE
+    API -- "6: save_result()" --> DB
+    API -- "7: return JSON" --> UI
+    UI -- "8: display results" --> User
+
+    class UI,API,PE,DB object;

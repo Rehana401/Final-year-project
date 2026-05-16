@@ -1,0 +1,38 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+skinparam node {
+    BackgroundColor white
+    BorderColor black
+}
+
+title SecurBank - Deployment Diagram
+
+node "Client Machine" as Client {
+    [Web Browser] as Browser
+}
+
+node "Application Server" as Server {
+    node "Frontend Environment (Node.js)" {
+        [React App (Vite)] as React
+    }
+    
+    node "Backend Environment (Python 3.10+)" {
+        [Flask API] as Flask
+        [ML Engine] as ML
+    }
+}
+
+database "Persistent Storage" as Storage {
+    [SQLite app.db] as DB
+    file "Model Files (.pkl)" as PKL
+}
+
+' Links
+Browser -- React : "HTTP/5173"
+React -- Flask : "REST/5000"
+Flask -- ML
+ML -- PKL
+Flask -- DB
+
+@enduml

@@ -1,0 +1,50 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+hide circle
+skinparam linetype ortho
+
+title SecurBank - Entity Relationship Diagram (ERD)
+
+entity "USERS" as USERS {
+  * userId : TEXT <<PK>>
+  --
+  * username : TEXT <<UK>>
+  * email : TEXT <<UK>>
+  * password : TEXT
+  is_admin : INTEGER
+  createdAt : TEXT
+  lastLogin : TEXT
+}
+
+entity "ANALYSIS_HISTORY" as HISTORY {
+  * historyId : TEXT <<PK>>
+  --
+  * userId : TEXT <<FK>>
+  transactionDetails : TEXT (JSON)
+  resultLabel : TEXT
+  riskScore : REAL
+  confidenceScore : REAL
+  featureImportance : TEXT (JSON)
+  predictedAt : TEXT
+  exportedAs : TEXT
+}
+
+entity "MODEL_METADATA" as MODELS {
+  * modelId : TEXT <<PK>>
+  --
+  * algorithmType : TEXT
+  version : TEXT
+  accuracy : REAL
+  precision_score : REAL
+  recall : REAL
+  f1Score : REAL
+  aucRoc : REAL
+  isBestModel : INTEGER
+  filePath : TEXT
+  trainedAt : TEXT
+}
+
+USERS ||--o{ HISTORY : "performs"
+
+@enduml
