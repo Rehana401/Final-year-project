@@ -35,6 +35,7 @@ DROP_COLUMNS = [
     "Customer_ID", "Customer_Name", "Transaction_ID", "Merchant_ID",
     "Customer_Contact", "Customer_Email", "Transaction_Currency",
     "Transaction_Location", "Transaction_Description", "Gender",
+    "State", "City", "Bank_Branch",
 ]
 
 # Core numeric feature names (before one-hot encoding)

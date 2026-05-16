@@ -189,11 +189,11 @@ class PredictionEngine:
         # Amount risk
         amount = raw_values.get("Transaction_Amount", 0)
         if amount > 80000:
-            flags["Transaction Amount"] = {"flag": "⚠️", "note": f"Very high amount (₹{amount:,.2f})"}
+            flags["Transaction Amount"] = {"flag": "⚠️", "note": f"Very high amount (Rs{amount:,.2f})"}
         elif amount > 50000:
-            flags["Transaction Amount"] = {"flag": "⚠️", "note": f"High amount (₹{amount:,.2f})"}
+            flags["Transaction Amount"] = {"flag": "⚠️", "note": f"High amount (Rs{amount:,.2f})"}
         else:
-            flags["Transaction Amount"] = {"flag": "✅", "note": f"Normal amount (₹{amount:,.2f})"}
+            flags["Transaction Amount"] = {"flag": "✅", "note": f"Normal amount (Rs{amount:,.2f})"}
 
         # Balance ratio
         balance = raw_values.get("Account_Balance", 1)
