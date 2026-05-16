@@ -1,22 +1,23 @@
 @startuml
-skinparam componentStyle rectangle
-skinparam handwritten false
+skinparam monochrome true
 skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
 
 skinparam component {
-    BackgroundColor #EFF6FF
-    BorderColor #3B82F6
-    ArrowColor #64748B
+    BackgroundColor white
+    BorderColor black
+    ArrowColor black
 }
 
 skinparam package {
     BackgroundColor white
-    BorderColor #94A3B8
+    BorderColor black
 }
 
 skinparam database {
-    BackgroundColor #F0FDF4
-    BorderColor #22C55E
+    BackgroundColor white
+    BorderColor black
 }
 
 title SecurBank - Component Diagram (React/Flask Architecture)
