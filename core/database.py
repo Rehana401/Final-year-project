@@ -287,3 +287,9 @@ class DatabaseManager:
         with self._get_connection() as conn:
             row = conn.execute("SELECT COUNT(*) as cnt FROM ANALYSIS_HISTORY").fetchone()
         return row["cnt"] if row else 0
+
+    def get_user_analyses_count(self, user_id: str) -> int:
+        """Get total number of analyses performed by a specific user."""
+        with self._get_connection() as conn:
+            row = conn.execute("SELECT COUNT(*) as cnt FROM ANALYSIS_HISTORY WHERE userId = ?", (user_id,)).fetchone()
+        return row["cnt"] if row else 0

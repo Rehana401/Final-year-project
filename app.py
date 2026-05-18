@@ -2,7 +2,7 @@ import os
 import sys
 from flask import Flask, jsonify
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 
 # Ensure project root is in path
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -45,11 +45,13 @@ def create_app():
     app.register_blueprint(user_bp, url_prefix='/api/user')
     
     @app.route('/api/stats', methods=['GET'])
+    @jwt_required()
     def get_stats():
+        current_user = get_jwt_identity()
         from extensions import db_manager, prediction_engine
         return jsonify({
             "users": db_manager.get_user_count(),
-            "analyses": db_manager.get_total_analyses(),
+            "analyses": db_manager.get_user_analyses_count(current_user["userId"]),
             "model_ready": prediction_engine.is_ready()
         }), 200
 

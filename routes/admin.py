@@ -189,6 +189,10 @@ def delete_user(user_id):
     if not admin_required():
         return jsonify({"msg": "Admin access required"}), 403
         
+    claims = get_jwt()
+    if claims.get('email') != 'rehanakousar108727@gmail.com':
+        return jsonify({"msg": "Super Admin access required to delete users"}), 403
+        
     try:
         with db_manager._get_connection() as conn:
             # Prevent deleting self or primary admin logic here if needed
