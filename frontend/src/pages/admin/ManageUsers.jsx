@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Users, Shield, ShieldOff, Trash2 } from 'lucide-react';
 import PageTransition from '../../components/layout/PageTransition';
 import api from '../../services/api';
+import { AuthContext } from '../../context/AuthContext';
 
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   
-  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-  const isSuperAdmin = currentUser.email === 'rehanakousar108727@gmail.com';
+  const { user: currentUser } = useContext(AuthContext);
+  const isSuperAdmin = currentUser?.email === 'rehanakousar108727@gmail.com';
 
   useEffect(() => {
     api.get('/admin/users')
@@ -109,16 +110,16 @@ const ManageUsers = () => {
                         onClick={() => handleDeleteUser(user.userId, user.username)}
                         style={{
                           background: 'none', border: 'none', color: 'var(--danger)', 
-                          cursor: (isSuperAdmin && user.userId !== currentUser.userId) ? 'pointer' : 'not-allowed',
+                          cursor: (isSuperAdmin && user.userId !== currentUser?.userId) ? 'pointer' : 'not-allowed',
                           padding: '0.5rem', borderRadius: 'var(--radius-md)', transition: 'background-color 0.2s ease',
                           display: 'inline-flex', alignItems: 'center', justifyContent: 'center'
                         }}
-                        onMouseOver={(e) => { if (isSuperAdmin && user.userId !== currentUser.userId) e.currentTarget.style.backgroundColor = 'var(--danger-bg)' }}
-                        onMouseOut={(e) => { if (isSuperAdmin && user.userId !== currentUser.userId) e.currentTarget.style.backgroundColor = 'transparent' }}
-                        title={isSuperAdmin ? (user.userId === currentUser.userId ? "Cannot delete yourself" : `Delete ${user.username}`) : "Only Super Admin can delete users"}
-                        disabled={!isSuperAdmin || user.userId === currentUser.userId}
+                        onMouseOver={(e) => { if (isSuperAdmin && user.userId !== currentUser?.userId) e.currentTarget.style.backgroundColor = 'var(--danger-bg)' }}
+                        onMouseOut={(e) => { if (isSuperAdmin && user.userId !== currentUser?.userId) e.currentTarget.style.backgroundColor = 'transparent' }}
+                        title={isSuperAdmin ? (user.userId === currentUser?.userId ? "Cannot delete yourself" : `Delete ${user.username}`) : "Only Super Admin can delete users"}
+                        disabled={!isSuperAdmin || user.userId === currentUser?.userId}
                       >
-                        <Trash2 size={18} style={{ opacity: (!isSuperAdmin || user.userId === currentUser.userId) ? 0.3 : 1 }} />
+                        <Trash2 size={18} style={{ opacity: (!isSuperAdmin || user.userId === currentUser?.userId) ? 0.3 : 1 }} />
                       </button>
                     </td>
                   </tr>

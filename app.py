@@ -51,7 +51,7 @@ def create_app():
         from extensions import db_manager, prediction_engine
         return jsonify({
             "users": db_manager.get_user_count(),
-            "analyses": db_manager.get_user_analyses_count(current_user["userId"]),
+            "analyses": db_manager.get_user_analyses_count(current_user),
             "model_ready": prediction_engine.is_ready()
         }), 200
 
